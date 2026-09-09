@@ -15,7 +15,7 @@ services:
       - key: DATA_DIR
         value: /var/data
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: 3.13.7
     disk:
       name: teacher-app-data
       mountPath: /var/data
