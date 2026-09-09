@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ t.classement }}</h1>
+    <form method="post" action="{{ url_for('classement_recalculate') }}">
+        <button type="submit" class="btn-primary">🔄 {{ t.recalculate }}</button>
+    </form>
+</div>
+
+<p class="notice">
+    ⚠️ Formule de score TEMPORAIRE (basée sur l'ancienneté) en attendant la
+    méthode officielle — modifiable dans <code>classement.py</code>. Le
+    classement est calculé <strong>séparément pour chaque grade</strong>.<br>
+    ⚠️ صيغة النقطة الحالية مؤقتة (تعتمد على الأقدمية) في انتظار المنهجية
+    الرسمية — قابلة للتعديل في ملف <code>classement.py</code>. يُحسب
+    الترتيب <strong>بشكل منفصل لكل رتبة</strong>.
+</p>
+
+{% for rank in ranks %}
+<div class="rank-section">
+    <div class="rank-section-header rank-{{ rank|lower }}">
+        <h2>{{ rank }}</h2>
+        <span class="rank-duration">
+            {% for r in rank_rythmes.get(rank, []) %}
+                {{ r }} ({{ duration_label(durations[r]) }}){% if not loop.last %} · {% endif %}
+            {% endfor %}
+        </span>
+    </div>
+
+    {% set teachers = groups.get(rank, []) %}
+    {% if teachers %}
+    <div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>{{ t.rank }}</th>
+                <th>{{ t.photo }}</th>
+                <th>{{ t.full_name }}</th>
+                <th>{{ t.faculty }}</th>
+                <th>{{ t.grade }}</th>
+                <th>{{ t.score }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher.classement_rank or '-' }}</td>
+                <td>
+                    {% if teacher.photo %}
+                    <img class="thumb" src="{{ url_for('static', filename='uploads/' ~ teacher.photo) }}" alt="">
+                    {% else %}
+                    <div class="thumb placeholder">👤</div>
+                    {% endif %}
+                </td>
+                <td><a href="{{ url_for('view_teacher', teacher_id=teacher.id) }}">{{ teacher.full_name }}</a></td>
+                <td>{{ teacher.faculty or '-' }}</td>
+                <td>{{ teacher.grade or '-' }}</td>
+                <td><strong>{{ teacher.classement_score if teacher.classement_score is not none else '-' }}</strong></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p class="empty">{{ t.no_data }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if unranked %}
+<div class="rank-section">
+    <div class="rank-section-header">
+        <h2>{{ t.unranked }}</h2>
+    </div>
+    <div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr><th>{{ t.full_name }}</th><th>{{ t.faculty }}</th></tr>
+        </thead>
+        <tbody>
+        {% for teacher in unranked %}
+            <tr>
+                <td><a href="{{ url_for('view_teacher', teacher_id=teacher.id) }}">{{ teacher.full_name }}</a></td>
+                <td>{{ teacher.faculty or '-' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

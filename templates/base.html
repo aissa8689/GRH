@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ t.app_title }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-icon">🎓</span>
+        <span>{{ t.app_title }}</span>
+    </div>
+    <nav class="nav">
+        <a href="{{ url_for('index') }}">{{ t.list }}</a>
+        <a href="{{ url_for('add_teacher') }}">{{ t.add }}</a>
+        <a href="{{ url_for('excel_import') }}">{{ t.import_excel }}</a>
+        <a href="{{ url_for('excel_export') }}">{{ t.export_excel }}</a>
+        <a href="{{ url_for('classement_view') }}">{{ t.classement }}</a>
+        <a href="{{ url_for('sessions_list') }}">{{ t.sessions }}</a>
+        <a class="lang-btn" href="{{ url_for('set_lang', lang_code='ar' if lang=='fr' else 'fr') }}">
+            🌐 {{ t.lang_switch }}
+        </a>
+        {% if current_user.is_authenticated %}
+        <span class="user-badge">👤 {{ current_user.username }}</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">🚪 {{ t.logout }}</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <small>© {{ t.app_title }} — Flask · SQLite · Excel Import/Export</small>
+</footer>
+</body>
+</html>

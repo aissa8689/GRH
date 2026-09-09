@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="view-card">
+    <div class="view-header">
+        {% if teacher.photo %}
+        <img class="view-photo" src="{{ url_for('static', filename='uploads/' ~ teacher.photo) }}" alt="">
+        {% else %}
+        <div class="view-photo placeholder">👤</div>
+        {% endif %}
+        <div>
+            <h1>{{ teacher.full_name }}</h1>
+            <p class="muted">
+                {% if teacher.academic_rank %}
+                <span class="rank-badge rank-{{ teacher.academic_rank|lower }}">{{ teacher.academic_rank }}</span>
+                {% endif %}
+                {{ teacher.faculty or '-' }} · {{ teacher.grade or '-' }}
+            </p>
+        </div>
+    </div>
+
+    {% if guaranteed_date or rythme_dates %}
+    <div class="notice">
+        {% if rythme_dates %}
+        <p style="margin:0 0 8px;">📅 Dates d'éligibilité par rythme / تواريخ الاستحقاق حسب الإيقاع :</p>
+        <ul style="margin:0; padding-inline-start: 20px;">
+        {% for rythme, date in rythme_dates.items() %}
+            <li>
+                <strong>{{ rythme_labels[rythme].fr }} / {{ rythme_labels[rythme].ar }}</strong>
+                ({{ duration_label(durations[rythme]) }}) :
+                {{ date.strftime('%d/%m/%Y') if date else '-' }}
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="view-grid">
+        <div><strong>{{ t.serial_number }}</strong><span>{{ teacher.serial_number or '-' }}</span></div>
+        <div><strong>{{ t.birth_date }}</strong><span>{{ teacher.birth_date or '-' }}</span></div>
+        <div><strong>{{ t.marital_status }}</strong><span>{{ teacher.marital_status or '-' }}</span></div>
+        <div><strong>{{ t.children_count }}</strong><span>{{ teacher.children_count or 0 }}</span></div>
+        <div><strong>{{ t.hire_rank_date }}</strong><span>{{ teacher.hire_rank_date or '-' }}</span></div>
+        <div><strong>{{ t.current_rank_date }}</strong><span>{{ teacher.current_rank_date or '-' }}</span></div>
+        <div><strong>{{ t.appointment_decision_ref }}</strong><span>{{ teacher.appointment_decision_ref or '-' }}</span></div>
+        <div><strong>{{ t.financial_visa_number }}</strong><span>{{ teacher.financial_visa_number or '-' }}</span></div>
+        <div><strong>{{ t.financial_visa_date }}</strong><span>{{ teacher.financial_visa_date or '-' }}</span></div>
+        <div><strong>{{ t.grade_effect_date }}</strong><span>{{ teacher.grade_effect_date or '-' }}</span></div>
+        <div><strong>{{ t.score }}</strong><span>{{ teacher.classement_score if teacher.classement_score is not none else '-' }}</span></div>
+        <div><strong>{{ t.rank }}</strong><span>{{ teacher.classement_rank or '-' }}</span></div>
+        <div class="full-width"><strong>{{ t.notes }}</strong><span>{{ teacher.notes or '-' }}</span></div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ url_for('edit_teacher', teacher_id=teacher.id) }}" class="btn-primary">{{ t.edit }}</a>
+        <a href="{{ url_for('index') }}" class="btn-secondary">{{ t.cancel }}</a>
+    </div>
+
+    {% if teacher.history %}
+    <h2 class="history-table">📜 {{ t.history }}</h2>
+    <div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Rythme</th>
+                <th>Ancienne درجة</th>
+                <th>Nouvelle درجة</th>
+                <th>Ancienne تاريخ النفاذ</th>
+                <th>Nouvelle تاريخ النفاذ</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for h in teacher.history %}
+            <tr>
+                <td>{{ h.session_date or '-' }}</td>
+                <td>{{ h.rythme or '-' }}</td>
+                <td>{{ h.old_grade or '-' }}</td>
+                <td>{{ h.new_grade or '-' }}</td>
+                <td>{{ h.old_effect_date or '-' }}</td>
+                <td>{{ h.new_effect_date or '-' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

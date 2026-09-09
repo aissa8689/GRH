@@ -1,0 +1,171 @@
+.login-body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f2f4c 0%, #1e5b8a 45%, #2f8f9e 100%);
+    position: relative;
+    overflow: hidden;
+    font-family: "Segoe UI", "Cairo", Tahoma, Arial, sans-serif;
+}
+
+.login-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.login-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+}
+.blob-1 {
+    width: 380px; height: 380px;
+    background: #4fd1c5;
+    top: -100px; left: -80px;
+    animation: float1 12s ease-in-out infinite;
+}
+.blob-2 {
+    width: 320px; height: 320px;
+    background: #f6c453;
+    bottom: -100px; right: -60px;
+    animation: float2 14s ease-in-out infinite;
+}
+.blob-3 {
+    width: 260px; height: 260px;
+    background: #7c5cff;
+    bottom: 20%; left: 8%;
+    animation: float1 16s ease-in-out infinite reverse;
+}
+
+@keyframes float1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 40px); }
+}
+@keyframes float2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, -30px); }
+}
+
+.login-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px 34px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+    animation: cardIn 0.5s ease-out;
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-icon {
+    font-size: 2.6rem;
+    width: 76px; height: 76px;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1e5b8a, #2f8f9e);
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(30, 91, 138, 0.35);
+}
+
+.login-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #16324a;
+    font-weight: 800;
+}
+.login-subtitle {
+    margin: 2px 0 6px;
+    font-size: 0.95rem;
+    color: #4b5f70;
+    font-weight: 600;
+}
+.login-tagline {
+    margin: 0 0 24px;
+    font-size: 0.8rem;
+    color: #8493a1;
+}
+
+.login-form { display: flex; flex-direction: column; gap: 14px; }
+
+.login-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login-field:focus-within {
+    border-color: #1e5b8a;
+    box-shadow: 0 0 0 3px rgba(30, 91, 138, 0.12);
+}
+.login-field-icon {
+    padding: 0 12px;
+    font-size: 1rem;
+    opacity: 0.7;
+}
+.login-field input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 13px 12px 13px 0;
+    font-size: 0.95rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.login-btn {
+    margin-top: 6px;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e5b8a, #2f8f9e);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 10px 22px rgba(30, 91, 138, 0.3);
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(30, 91, 138, 0.38); }
+.login-btn:active { transform: translateY(0); }
+.login-btn .ar { opacity: 0.85; font-weight: 600; }
+
+.login-hint {
+    margin-top: 20px;
+    font-size: 0.78rem;
+    color: #9aa7b4;
+}
+.login-hint code {
+    background: #eef3f8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1e5b8a;
+}
+
+.login-card .flash { text-align: start; margin-bottom: 10px; font-size: 0.85rem; }

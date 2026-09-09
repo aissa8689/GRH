@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t.sessions }}</h1>
+
+<p class="notice">
+    📅 Chaque session correspond au 31 décembre d'une année. Une fois créée,
+    définissez le nombre de postes (quota) par grade et par rythme, puis
+    exécutez la session pour calculer automatiquement les avancements
+    d'échelon éligibles.<br>
+    📅 كل جلسة تقابل 31 ديسمبر من سنة معينة. بعد الإنشاء، حدّد عدد المناصب
+    لكل رتبة وإيقاع، ثم نفّذ الجلسة لحساب الترقيات المستحقة تلقائيًا.
+</p>
+
+<form method="post" action="{{ url_for('sessions_create') }}" class="create-session-form">
+    <label>31 / 12 / </label>
+    <input type="number" name="year" placeholder="2026" min="2000" max="2100" required>
+    <button type="submit" class="btn-primary">➕ Créer une session / إنشاء جلسة</button>
+</form>
+
+{% if sessions %}
+<div class="session-list">
+    {% for s in sessions %}
+    <div class="session-item">
+        <a href="{{ url_for('session_detail', session_id=s.id) }}">📅 {{ s.session_date }}</a>
+        {% if s.executed %}
+        <span class="session-status status-done">✔ Exécutée le {{ s.executed_at.strftime('%d/%m/%Y') if s.executed_at else '' }}</span>
+        {% else %}
+        <span class="session-status status-pending">⏳ En attente</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty">Aucune session créée / لا توجد جلسات بعد</p>
+{% endif %}
+{% endblock %}

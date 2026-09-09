@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t.import_excel }}</h1>
+
+<div class="import-card">
+    <p>
+        📄 Format Français : téléchargez le modèle, remplissez-le, puis importez-le.<br>
+        📄 النموذج بالعربية: حمّل النموذج، املأه، ثم قم باستيراده.
+    </p>
+    <a class="btn-secondary" href="{{ url_for('excel_template') }}">⬇ {{ t.download_template }}</a>
+
+    <form method="post" enctype="multipart/form-data" class="import-form">
+        <input type="file" name="excel_file" accept=".xlsx,.xls" required>
+        <button type="submit" class="btn-primary">{{ t.import_excel }}</button>
+    </form>
+
+    <p class="muted">
+        ℹ️ L'import détecte automatiquement les enseignants existants (par numéro
+        de série ou par nom) et les met à jour ; sinon un nouvel enregistrement est créé.<br>
+        ℹ️ يكتشف الاستيراد تلقائيًا الأساتذة الموجودين مسبقًا (بالرقم التسلسلي أو
+        بالاسم) ويحدّث بياناتهم، وإلا يتم إنشاء سجل جديد.
+    </p>
+</div>
+{% endblock %}

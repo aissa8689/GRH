@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t.edit if teacher else t.add }}</h1>
+
+<form method="post" enctype="multipart/form-data" class="teacher-form">
+    <div class="form-grid">
+        <div class="form-group photo-group">
+            <label>{{ t.photo }}</label>
+            {% if teacher and teacher.photo %}
+            <img class="preview" src="{{ url_for('static', filename='uploads/' ~ teacher.photo) }}" alt="">
+            {% else %}
+            <div class="preview placeholder">👤</div>
+            {% endif %}
+            <input type="file" name="photo" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.academic_rank }} *</label>
+            {% set cur_rank = teacher.academic_rank if teacher else '' %}
+            <select name="academic_rank" required>
+                <option value="">--</option>
+                <option value="Professeur" {{ 'selected' if cur_rank=='Professeur' }}>Professeur / أستاذ</option>
+                <option value="MCA" {{ 'selected' if cur_rank=='MCA' }}>MCA / أستاذ محاضر أ</option>
+                <option value="MCB" {{ 'selected' if cur_rank=='MCB' }}>MCB / أستاذ محاضر ب</option>
+                <option value="MAA" {{ 'selected' if cur_rank=='MAA' }}>MAA / أستاذ مساعد أ</option>
+                <option value="MAB" {{ 'selected' if cur_rank=='MAB' }}>MAB / أستاذ مساعد ب</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.serial_number }}</label>
+            <input type="number" name="serial_number" value="{{ teacher.serial_number if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.full_name }} *</label>
+            <input type="text" name="full_name" required value="{{ teacher.full_name if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.birth_date }}</label>
+            <input type="date" name="birth_date" value="{{ teacher.birth_date if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.marital_status }}</label>
+            <select name="marital_status">
+                {% set current = teacher.marital_status if teacher else '' %}
+                <option value="">--</option>
+                <option value="Célibataire" {{ 'selected' if current=='Célibataire' }}>Célibataire / أعزب</option>
+                <option value="Marié(e)" {{ 'selected' if current=='Marié(e)' }}>Marié(e) / متزوج</option>
+                <option value="Divorcé(e)" {{ 'selected' if current=='Divorcé(e)' }}>Divorcé(e) / مطلق</option>
+                <option value="Veuf(ve)" {{ 'selected' if current=='Veuf(ve)' }}>Veuf(ve) / أرمل</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.children_count }}</label>
+            <input type="number" min="0" name="children_count" value="{{ teacher.children_count if teacher else 0 }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.hire_rank_date }}</label>
+            <input type="date" name="hire_rank_date" value="{{ teacher.hire_rank_date if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.current_rank_date }}</label>
+            <input type="date" name="current_rank_date" value="{{ teacher.current_rank_date if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.appointment_decision_ref }}</label>
+            <input type="text" name="appointment_decision_ref" value="{{ teacher.appointment_decision_ref if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.financial_visa_number }}</label>
+            <input type="text" name="financial_visa_number" value="{{ teacher.financial_visa_number if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.financial_visa_date }}</label>
+            <input type="date" name="financial_visa_date" value="{{ teacher.financial_visa_date if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.grade }}</label>
+            <input type="text" name="grade" value="{{ teacher.grade if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.grade_effect_date }}</label>
+            <input type="date" name="grade_effect_date" value="{{ teacher.grade_effect_date if teacher else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>{{ t.faculty }}</label>
+            <input type="text" name="faculty" value="{{ teacher.faculty if teacher else '' }}">
+        </div>
+
+        <div class="form-group full-width">
+            <label>{{ t.notes }}</label>
+            <textarea name="notes" rows="3">{{ teacher.notes if teacher else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">{{ t.save }}</button>
+        <a href="{{ url_for('index') }}" class="btn-secondary">{{ t.cancel }}</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>📅 Session du {{ promo_session.session_date }}</h1>
+    {% if promo_session.executed %}
+    <span class="session-status status-done">✔ Exécutée</span>
+    {% else %}
+    <span class="session-status status-pending">⏳ En attente</span>
+    {% endif %}
+</div>
+
+<h2>⚙️ Quotas de postes par grade et par rythme / حصص المناصب لكل رتبة وإيقاع</h2>
+<p class="notice">
+    ℹ️ Un enseignant qui a atteint la durée du rythme <strong>moyen</strong>
+    a forcément aussi atteint celle du rythme <strong>minimum</strong> (plus
+    courte) : il apparaît donc normalement dans les deux listes ci-dessous.
+    À l'exécution, il sera compté <strong>une seule fois</strong> — au
+    rythme le plus rapide où une place (quota) lui est disponible.<br>
+    ℹ️ الأستاذ الذي بلغ مدة الإيقاع <strong>المتوسط</strong> يكون بالضرورة
+    قد بلغ أيضًا مدة الإيقاع <strong>الأدنى</strong> (الأقصر)، لذا يظهر
+    عادة في كلتا القائمتين أدناه. عند التنفيذ، سيُحتسب <strong>مرة واحدة
+    فقط</strong> — في أسرع إيقاع تتوفر فيه له حصة (منصب) شاغر.
+</p>
+<form method="post" action="{{ url_for('session_update_quota', session_id=promo_session.id) }}">
+<div class="table-wrap quota-table">
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>{{ t.academic_rank }}</th>
+            <th>Rythme / الإيقاع</th>
+            <th>Durée / المدة</th>
+            <th>Éligibles / المستحقون</th>
+            <th>Quota (postes) — 0 = illimité</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for rank, rythme_list in rythmes.items() %}
+        {% for r in rythme_list %}
+        {% set q = quotas.get((rank, r)) %}
+        {% set elig_count = groups.get(rank, {}).get(r, [])|length %}
+        <tr>
+            <td><span class="rank-badge rank-{{ rank|lower }}">{{ rank }}</span></td>
+            <td>{{ rythme_labels[r].fr }} / {{ rythme_labels[r].ar }}</td>
+            <td>{{ duration_label(durations[r]) }}</td>
+            <td>{{ elig_count }}</td>
+            <td>
+                {% if q %}
+                <input type="number" min="0" name="quota_{{ q.id }}" value="{{ q.quota_count }}"
+                       {{ 'disabled' if promo_session.executed }}>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% if not promo_session.executed %}
+<div class="form-actions">
+    <button type="submit" class="btn-primary">💾 Enregistrer les quotas / حفظ الحصص</button>
+</div>
+{% endif %}
+</form>
+
+<h2>👥 Enseignants éligibles par grade et par rythme (classés par score)</h2>
+{% for rank in groups.keys() %}
+<div class="rank-section">
+    <div class="rank-section-header rank-{{ rank|lower }}">
+        <h2>{{ rank }}</h2>
+    </div>
+
+    {% for r in rythmes.get(rank, []) %}
+    {% set teachers = groups[rank].get(r, []) %}
+    <div class="rythme-subsection">
+        <h3>{{ rythme_labels[r].fr }} / {{ rythme_labels[r].ar }}
+            <span class="muted">({{ duration_label(durations[r]) }}) — {{ teachers|length }} éligible(s)</span>
+        </h3>
+        {% if teachers %}
+        <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{ t.full_name }}</th>
+                    <th>{{ t.faculty }}</th>
+                    <th>{{ t.grade }} actuel</th>
+                    <th>{{ t.score }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for teacher in teachers %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="{{ url_for('view_teacher', teacher_id=teacher.id) }}">{{ teacher.full_name }}</a></td>
+                    <td>{{ teacher.faculty or '-' }}</td>
+                    <td>{{ teacher.grade or '-' }}</td>
+                    <td><strong>{{ teacher.classement_score if teacher.classement_score is not none else '-' }}</strong></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <p class="empty">Aucun enseignant éligible à ce rythme</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% if not promo_session.executed %}
+<form method="post" action="{{ url_for('session_run', session_id=promo_session.id) }}"
+      onsubmit="return confirm('Confirmer l\'exécution de la session ? Cette action mettra à jour les dates de nomination et créera un historique. / تأكيد تنفيذ الجلسة؟');">
+    <button type="submit" class="btn-primary">🚀 Exécuter la session / تنفيذ الجلسة</button>
+</form>
+{% else %}
+<p class="notice">✔ Cette session a déjà été exécutée. Consultez l'historique de chaque enseignant sur sa fiche.</p>
+{% endif %}
+
+<a href="{{ url_for('sessions_list') }}" class="btn-secondary" style="display:inline-block;margin-top:16px;">← Retour aux sessions</a>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ t.list }}</h1>
+    <form class="search-form" method="get">
+        <input type="text" name="q" placeholder="{{ t.search }}" value="{{ query }}">
+        <button type="submit">🔍</button>
+    </form>
+</div>
+
+{% if teachers %}
+<div class="table-wrap">
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>{{ t.photo }}</th>
+            <th>{{ t.serial_number }}</th>
+            <th>{{ t.full_name }}</th>
+            <th>{{ t.academic_rank }}</th>
+            <th>{{ t.faculty }}</th>
+            <th>{{ t.grade }}</th>
+            <th>{{ t.marital_status }}</th>
+            <th>{{ t.children_count }}</th>
+            <th>{{ t.score }}</th>
+            <th>{{ t.actions }}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for teacher in teachers %}
+        <tr>
+            <td>
+                {% if teacher.photo %}
+                <img class="thumb" src="{{ url_for('static', filename='uploads/' ~ teacher.photo) }}" alt="">
+                {% else %}
+                <div class="thumb placeholder">👤</div>
+                {% endif %}
+            </td>
+            <td>{{ teacher.serial_number or '-' }}</td>
+            <td><a href="{{ url_for('view_teacher', teacher_id=teacher.id) }}">{{ teacher.full_name }}</a></td>
+            <td><span class="rank-badge rank-{{ teacher.academic_rank|lower }}">{{ teacher.academic_rank or '-' }}</span></td>
+            <td>{{ teacher.faculty or '-' }}</td>
+            <td>{{ teacher.grade or '-' }}</td>
+            <td>{{ teacher.marital_status or '-' }}</td>
+            <td>{{ teacher.children_count or 0 }}</td>
+            <td>{{ teacher.classement_score if teacher.classement_score is not none else '-' }}</td>
+            <td class="actions">
+                <a class="btn-icon" href="{{ url_for('view_teacher', teacher_id=teacher.id) }}" title="{{ t.view }}">👁️</a>
+                <a class="btn-icon" href="{{ url_for('edit_teacher', teacher_id=teacher.id) }}" title="{{ t.edit }}">✏️</a>
+                <form method="post" action="{{ url_for('delete_teacher', teacher_id=teacher.id) }}"
+                      onsubmit="return confirm('{{ t.confirm_delete }}');" style="display:inline;">
+                    <button type="submit" class="btn-icon btn-danger" title="{{ t.delete }}">🗑️</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">{{ t.no_data }}</p>
+{% endif %}
+{% endblock %}

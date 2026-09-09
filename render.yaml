@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: gestion-enseignants
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT app:app"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: DATA_DIR
+        value: /var/data
+      - key: PYTHON_VERSION
+        value: 3.11.9
+    disk:
+      name: teacher-app-data
+      mountPath: /var/data
+      sizeGB: 1
